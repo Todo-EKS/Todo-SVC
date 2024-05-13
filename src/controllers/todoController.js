@@ -1,4 +1,5 @@
 const Todo = require('../../db/models/todo');
+const moment = require('moment');
 const { v4: uuidv4 } = require('uuid');
 
 const getTodos = async (ctx, next) => {
@@ -29,6 +30,7 @@ const addTodo = async (ctx, next) => {
       id,
       user_id: userId,
       title: ctx.request?.body?.title,
+      target_date: ctx.request?.body?.targetDate ? moment(ctx.request?.body?.targetDate).format('M-D-YYYY') : moment().format('M-D-YYYY'),
       completed: false,
       created_at: new Date().toISOString()
     }

@@ -10,6 +10,7 @@ exports.up = function(knex) {
     table.string('title').notNullable();
     table.boolean('completed').defaultTo(false);
     table.timestamp('created_at').notNullable();
+    table.string('target_date').notNullable();
   })
 };
 

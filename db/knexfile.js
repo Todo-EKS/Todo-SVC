@@ -29,9 +29,9 @@ module.exports = {
   awsRDS: {
     client: 'pg',
     connection: {
-      host: process.env.DB_URL,
-      user: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
+      host: process.env.RDS_POSTGRES_DB_URL,
+      user: process.env.RDS_POSTGRES_DB_USERNAME,
+      password: process.env.RDS_POSTGRES_DB_PASSWORD,
       database: 'postgres',
       ssl: {
         rejectUnauthorized: false
