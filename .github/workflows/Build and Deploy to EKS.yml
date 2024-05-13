@@ -68,12 +68,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Create db password secret.
-        run: kubectl create secret generic todosecrets --from-literal=postgres_db_password=${{ secrets.RDS_POSTGRES_DB_PASSWORD }}
-
-      - name: Create db username secret.
-        run: kubectl create secret generic todosecrets --from-literal=postgres_db_username=${{ secrets.RDS_POSTGRES_DB_USERNAME }}
-
       - name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
@@ -85,6 +79,12 @@ jobs:
 
       # - name: Login to ECR
       #   run: aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 715514482422.dkr.ecr.us-east-2.amazonaws.com
+
+      - name: Create db password secret.
+        run: kubectl create secret generic todosecrets --from-literal=postgres_db_password=${{ secrets.RDS_POSTGRES_DB_PASSWORD }}
+
+      - name: Create db username secret.
+        run: kubectl create secret generic todosecrets --from-literal=postgres_db_username=${{ secrets.RDS_POSTGRES_DB_USERNAME }}
 
       - name: Apply YAML depl file to EKS cluster
         run: kubectl apply -f k8s/todo-depl.yml
