@@ -7,7 +7,7 @@ function setupDb() {
   const db = knex(knexfile.awsRDS);
   console.log('execute db setup awsRDS', typeof knexfile.awsRDS)
   console.log('execute db setup awsRDS connection', typeof knexfile.awsRDS.connection)
-  console.log('execute db setup awsRDS connection pass', typeof knexfile.awsRDS.connection.password)
+  console.log('execute db setup awsRDS connection pass', knexfile.awsRDS.connection.password)
 
 
   Model.knex(db);
