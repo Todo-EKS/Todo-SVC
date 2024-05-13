@@ -31,7 +31,7 @@ module.exports = {
     connection: {
       host: process.env.RDS_POSTGRES_DB_URL,
       user: process.env.RDS_POSTGRES_DB_USERNAME,
-      password: process.env.RDS_POSTGRES_DB_PASSWORD,
+      password: `${process.env.RDS_POSTGRES_DB_PASSWORD}`,
       database: 'postgres',
       ssl: {
         rejectUnauthorized: false
