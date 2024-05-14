@@ -1,12 +1,11 @@
-on:
-  # Manual trigger workflow
-  workflow_dispatch:
-      # Inputs the workflow accepts.
-      # inputs:
-      #     environment:
-      #         description: "Environment to run the workflow"
-      #         type: environment
-      #         required: true
+name: Trigger Pipeline on New Feature Push
+'on':
+  push:
+    branches:
+    # whenever the code push to feature or debug or update branch, github action will automatically build and deploy code
+      - 'feature/**'
+      - 'update/**'
+      - 'debug/**'
 env:
   # Credentials for deployment to AWS
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -22,13 +21,6 @@ jobs:
     steps:
       - name: Code checkout
         uses: actions/checkout@v4
-
-      - name: Generate .env file
-        run: |
-          echo "RDS_POSTGRES_DB_URL=${{ secrets.RDS_POSTGRES_DB_URL }}" >> .env
-          echo "RDS_POSTGRES_DB_USERNAME=${{ secrets.RDS_POSTGRES_DB_USERNAME }}" >> .env
-          echo "RDS_POSTGRES_DB_PASSWORDN=${{ secrets.RDS_POSTGRES_DB_PASSWORD }}" >> .env
-          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
 
       - name: Login to Docker Hub
         uses: docker/login-action@v1
@@ -54,6 +46,7 @@ jobs:
       #     daemon_off: false
       #     dockerfile: ./Dockerfile
       #     context: ./
+
   DEPLOY_TO_EKS:
     needs: BUILD_AND_PUBLISH
     runs-on: ubuntu-latest
@@ -74,23 +67,11 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
       
-      - name: Get Kube config file
+      - name: Update Kubernetes config file
         run: aws eks update-kubeconfig --region ${{ env.AWS_REGION}} --name ${{ env.EKS_CLUSTER }}
 
       # - name: Login to ECR
       #   run: aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 715514482422.dkr.ecr.us-east-2.amazonaws.com
 
-      - name: Create db password secret.
-        run: kubectl create secret generic pgpassword --from-literal=postgres_db_password=${{ secrets.RDS_POSTGRES_DB_PASSWORD }}
-
-      - name: Create db username secret.
-        run: kubectl create secret generic pgusername --from-literal=postgres_db_username=${{ secrets.RDS_POSTGRES_DB_USERNAME }}
-
-      - name: Apply YAML depl file to EKS cluster
-        run: kubectl apply -f k8s/todo-depl.yml
-
-      - name: Apply YAML service file to EKS cluster
-        run: kubectl apply -f k8s/todo-clusterip-svc.yml
-      
-      - name: Apply YAML service NodePort for testing purpose to EKS cluster
-        run: kubectl apply -f k8s/todo-svc.yml
+      - name: Rollout update code build to EKS cluster
+        run: kubectl rollout restart deployment todo-depl
