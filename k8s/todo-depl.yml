@@ -20,4 +20,15 @@ spec:
         image: vunguyen88/todoeks-todo
         ports:
         - name: todo
-          containerPort: 8001       
+          containerPort: 8001
+        env:
+        - name: RDS_POSTGRES_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: pgpassword
+              key: postgres_db_password
+        - name: RDS_POSTGRES_DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: pgusername
+              key: postgres_db_username

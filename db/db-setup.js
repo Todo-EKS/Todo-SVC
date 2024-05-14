@@ -5,6 +5,7 @@ const { Model } = require('objection');
 function setupDb() {
   // const db = knex(knexfile.development);
   const db = knex(knexfile.awsRDS);
+
   Model.knex(db);
 }
 
