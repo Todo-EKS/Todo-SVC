@@ -23,16 +23,18 @@ const getTodos = async (ctx, next) => {
 };
 
 const addTodo = async (ctx, next) => {
+  console.log('req body ', ctx.request.body)
   try {
-    const userId = ctx.request.userInfo.userId;
+    const user_id = ctx.request.userInfo.user_id;
     const id = uuidv4();
     const newTodo = {
       id,
       user_id: userId,
       title: ctx.request?.body?.title,
-      target_date: ctx.request?.body?.targetDate ? moment(ctx.request?.body?.targetDate).format('M-D-YYYY') : moment().format('M-D-YYYY'),
+      target_date: ctx.request?.body?.target_date ? moment(ctx.request?.body?.target_date).format('M-D-YYYY') : moment().format('M-D-YYYY'),
       completed: false,
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
+      set_reminder: ctx.request?.body?.set_reminder
     }
     const response = await Todo.query().insert(newTodo);
     ctx.status = 201;
@@ -91,6 +93,7 @@ const deleteTodo = async (ctx, next) => {
 }
 
 const updateTodoStatus = async (ctx, next) => {
+  console.log('hit')
   try {
     const todoId = ctx.params.id;
     // const requestBody = ctx.request.body;
