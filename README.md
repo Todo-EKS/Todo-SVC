@@ -21,7 +21,7 @@ Clone this repository to your local machine using the following command:
 ```sh
 docker build -t todo-eks-todo .
 ```
-### 3. Run and map port 8001 to React app
+### 3. Run and map port 8001 to Todo app server
 ```sh
 docker run -p 8001:8001 todo-eks-todo
 ```
