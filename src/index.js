@@ -53,7 +53,7 @@ app.use(async (ctx, next) => {
 
     // add user_id to request
     ctx.request.userInfo = {
-      userId: decodedToken.userId
+      user_id: decodedToken.userId
     } 
 
     // If validation succeeds, call the next middleware

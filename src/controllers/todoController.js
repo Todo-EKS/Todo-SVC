@@ -4,9 +4,9 @@ const { v4: uuidv4 } = require('uuid');
 
 const getTodos = async (ctx, next) => {
   try {
-    const userId = ctx.request.userInfo.userId;
+    const user_id = ctx.request.userInfo.user_id;
     // const todo = await Todo.query().findById(id);
-    const todos = await Todo.query().whereIn('user_id', [userId])
+    const todos = await Todo.query().whereIn('user_id', [user_id])
     ctx.body = {
       status: 'success',
       message: `success fetch data`,
@@ -23,18 +23,21 @@ const getTodos = async (ctx, next) => {
 };
 
 const addTodo = async (ctx, next) => {
+  console.log('req body ', ctx.request.body)
   try {
-    const userId = ctx.request.userInfo.userId;
+    const user_id = ctx.request.userInfo.user_id;
     const id = uuidv4();
     const newTodo = {
       id,
-      user_id: userId,
+      user_id,
       title: ctx.request?.body?.title,
-      target_date: ctx.request?.body?.targetDate ? moment(ctx.request?.body?.targetDate).format('M-D-YYYY') : moment().format('M-D-YYYY'),
+      target_date: ctx.request?.body?.target_date ? moment(ctx.request?.body?.target_date).format('M-D-YYYY') : moment().format('M-D-YYYY'),
       completed: false,
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
+      set_reminder: ctx.request?.body?.set_reminder
     }
     const response = await Todo.query().insert(newTodo);
+    console.log('response after insert ', response)
     ctx.status = 201;
     ctx.body = {
       status: 'success',
@@ -91,6 +94,7 @@ const deleteTodo = async (ctx, next) => {
 }
 
 const updateTodoStatus = async (ctx, next) => {
+  console.log('hit')
   try {
     const todoId = ctx.params.id;
     // const requestBody = ctx.request.body;
